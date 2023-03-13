@@ -11,8 +11,10 @@ const UserSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true,
-        validate: email
+        validate: function validateEmail(email) {
+            const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return regex.test(String(email).toLowerCase());
+        }
     },
     thoughts: [],
 },
@@ -22,6 +24,10 @@ const UserSchema = new Schema({
         getters: true
     },
     id: false
+});
+
+UserSchema.virtual('friendCount').get(function() {
+    return this.friends.length;
 });
 
 const User = model('User', UserSchema);
